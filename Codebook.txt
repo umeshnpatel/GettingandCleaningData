@@ -1,0 +1,90 @@
+Original data received from: https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+
+Looking at data files received, following information is extracted
+
+Data has total 28 txt files
+Two parts of the dataset - Train and Test/ contain following 6 main files 
+
+
+#'train/X_train.txt': Training set.
+#'train/y_train.txt': Training labels.
+#'test/X_test.txt': Test set.
+#'test/y_test.txt': Test labels.
+#'train/subject_train.txt': part of the train data 
+#'test/subject_train.txt': part of the test data 
+ 
+
+Another four files README.txt, features_info.txt, features.txt and activity_label.txt contain following information
+ 
+
+#'features_info.txt': Shows information about the variables used on the feature vector.
+#'features.txt': List of all features. 
+	#lists 561 features of UCI HAR datasets in - 561 obs
+	#2 variables (V1: index and V2: features)
+	
+
+#'activity_labels.txt': Links the class labels with their activity name.
+	#6 obs of 2 variables V1 and V2
+	#Variable V2 - 6 Labels - WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING
+	
+#so 6 activities in activity_labels and 561 features in features 	
+	
+
+#Analyse 6 files of two parts of dataset - train and test; 
+#train - three text files(xtrain, ytrain and subjecttrain).
+#test - three text files(xtest, ytest, subjecttest)
+#following information is extracted
+	#xtrain	:	7352 obs of 561 variables (each of the 561 obs of features)
+	#xtest	:	2947 obs of 561 variables (each of the 561 obs of features)
+
+	#ytrain	:	7352 obs of 1 variable, V1
+	#ytest	:	2947 obs of 1 variable , V1
+
+	#subjecttrain:	7352 obs of 1 variable, V1	
+	#subjecttest:	2947 obs of 1 variable , V1
+
+#Conclusion : 
+	#train data has 7352 obs and test data has 2947 obs
+	#x---- files lists obs for 561 features
+
+
+#Now merge train and test to create one dataset
+#merge two x---- files, name merged data frame as Feature as it contains contains 10299 obs (7352+2947) of 561 features
+#merge two y---- files, name merged data frame as Activity as it contains 10299 obs (7352+2947) of 1 variable (V1)
+#merge two subject---- files, name merged data frame as Subject as it contains 10299 obs (7352+2947) of 1 variable (V1)
+#provide appropriate desciptive names to variables such as Activity, Subject and name of features
+#Provide appropriate activity names into Activity. At this stage it contains 1,2,3,4,5 or 6
+#features.info contains this information 
+
+
+
+#Conclusion : Three files for combined (train and test) parts of the datasets are
+#	        1. Subject	:contains 10299 obs (7352+2947) of 1 variable Subject
+#		2. Activity	:contains 10299 obs (7352+2947) of 1 variable Actitity
+#		3. Feature	:contains 10299 obs (7352+2947) of 561 Features
+
+
+#merge these three data frames name SubjectActivityFeature
+#SubjectActivityFeature will have 10299 obs and 563 variables (Subject, Activity, and 561 Features)
+#Merge SubjectActivity with Feature for all 10299 obs 
+#SubjectActivity = 2 Variables
+#Feature = 561 variables
+#Total = 563 Variables
+#First Subject
+#Second = Activity
+#from 3-563 are Features
+
+	
+#Extracts only the measurements on the mean and standard deviation for each measurement.
+#mean and std are part of the feature names. there are some features includes "mean" and "std" words
+#compate each of the variables (features) with mean() and std() and extract them into measureMean and measureSD
+
+
+measureMean <- SubjectActivityFeatures[grep("mean()", names(SubjectActivityFeatures), value = FALSE, fixed = TRUE)]
+#View(measureMean)
+measureSD <- SubjectActivityFeatures[grep("std()", names(SubjectActivityFeatures), value = FALSE, fixed = TRUE)]
+#View(measureSD)
+
+
+
+
