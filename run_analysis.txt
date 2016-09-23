@@ -1,0 +1,114 @@
+#Getting and Cleaning Data - Course Project
+#This R -Code will download UCI HAR (Human Activity Recognition Using Smartphones Dataset)
+#from https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
+#This will be an untidy dataset and code will transform it into tidy dataset
+
+
+# Anaylse data - check how many files are there in this dataset, read appropriate files (*README) for more information
+
+files<-list.files("./UCIHAR", recursive=TRUE)
+#files
+
+#Analyse features.txt for dataset features and activity_labels.txt for activity labels
+
+features<- read.table("./UCIHAR/features.txt")
+#dim(features)
+#names(features)
+#View(features)
+
+activity_labels<-read.table("./UCIHAR/activity_labels.txt")
+#dim(features)
+#names(features)
+#View(activity_labels)
+
+#Analyse 6 files of two parts of dataset - train and test
+#train - three text files(xtrain, ytrain and subjecttrain).
+#test - three text files(xtest, ytest, subjecttest)
+
+
+xtrain<- read.table("./UCIHAR/train/X_train.txt")
+ytrain<- read.table("./UCIHAR/train/Y_train.txt")
+subjecttrain <- read.table("./UCIHAR/train/subject_train.txt")
+
+xtest <- read.table("./UCIHAR/test/X_test.txt")
+ytest <- read.table("./UCIHAR/test/Y_test.txt")
+subjecttest <- read.table("./UCIHAR/test/subject_test.txt")
+
+
+#Conclusion : 
+	#train data has 7352 obs and test data has 2947 obs
+	#x---- files lists obs for 561 features
+
+#561 features of x---- files are their variables with names V1,V2,...,V561
+#provide descriptive names of features from features.txt to these varibles V1,V2,...,V561
+
+
+colnames(xtrain) <- t(features[2])
+colnames(xtest) <- t(features[2])
+
+
+
+#Now merge train and test to create one dataset
+#merge two x---- files, name merged file as Feature as it contains 10299 obs (7352+2947) of 561 features
+#change variables names (V1...V561) discriptive names from features.txt 
+#Second variable V2 of features.txt contains names of 561 features 
+
+Feature<- rbind(xtrain, xtest)
+#View(Feature)
+names(Feature)<- features$V2
+#View(Feature)
+
+#merge two y---- files, name merged file as Activity.txt as it contains 10299 obs (7352+2947) of 1 variable (V1)
+# change the varialble(V1) a descriptive name Activity
+#Provide appropriate activity names into Activity. At this stage it contains 1,2,3,4,5 or 6
+#features.info contains this information 
+
+
+Activity<- rbind(ytrain, ytest)
+#View(Activity)
+names(Activity)<-c("Activity")
+#names(Activity)
+Activity$Activity <- as.character(Activity$Activity)
+Activity$Activity[Activity$Activity == 1] <- "Walking"
+Activity$Activity[Activity$Activity == 2] <- "Walking Upstairs"
+Activity$Activity[Activity$Activity == 3] <- "Walking Downstairs"
+Activity$Activity[Activity$Activity == 4] <- "Sitting"
+Activity$Activity[Activity$Activity == 5] <- "Standing"
+Activity$Activity[Activity$Activity == 6] <- "Laying"
+Activity$Activity<- as.factor(Activity$Activity)
+#View(Activity)
+
+#merge two subject---- files, name merged file as Subject.txt as it contains 10299 obs (7352+2947) of 1 variable (V1)
+# change the varialble(V1) a descriptive name Subject
+
+
+Subject <- rbind(subjecttrain, subjecttest)
+#View(Subject)
+names(Subject)<-c("Subject")
+#names(Subject)
+
+
+#merge (Subject, Activity and Feature) data frames and name SubjectActivityFeature
+#SubjectActivityFeature will have 10299 obs and 563 variables (Subject, Activity, and 561 Features)
+
+
+SubjectActivity <- cbind(Subject, Activity)
+#names(SubjectActivity)
+
+SubjectActivityFeatures <- cbind(SubjectActivity, Feature)
+#View(SubjectActivityFeatures)
+
+write.table(SubjectActivityFeatures, file="SubjectActivityFeatures.txt",row.name=FALSE) #write dataset into text file 
+
+write.csv(SubjectActivityFeatures, file="SubjectActivityFeatures.csv") #write dataset into csv file, easy to read
+
+#Extracts only the measurements on the mean and standard deviation for each measurement.
+#mean and std are part of the feature names. there are some features includes "mean" and "std" words
+#compate each of the variables (features) with mean() and std() and extract them into measureMean and measureSD
+
+
+measureMean <- SubjectActivityFeatures[grep("mean()", names(SubjectActivityFeatures), value = FALSE, fixed = TRUE)]
+#View(measureMean)
+measureSD <- SubjectActivityFeatures[grep("std()", names(SubjectActivityFeatures), value = FALSE, fixed = TRUE)]
+#View(measureSD)
+
